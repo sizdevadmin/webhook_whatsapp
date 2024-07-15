@@ -8,7 +8,7 @@ const express = require('express');
 const mysql = require('mysql2/promise'); 
 
 const app = express();
-const PORT = process.env.PORT ;
+const PORT = 3000;
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
