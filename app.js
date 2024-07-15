@@ -4,13 +4,31 @@
  * Remix this as the starting point for following the WhatsApp Echo Bot tutorial
  *
  */
+const express = require('express');
+const mysql = require('mysql2/promise'); 
 
+//const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware to parse JSON request bodies
+app.use(express.json());
 "use strict";
 require('dotenv').config();
 // Access token for your app
 // (copy token from DevX getting started page
 // and save it as environment variable into the .env file)
 const token = process.env.WHATSAPP_TOKEN;
+
+const dbConfig = {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+};
+
+
+// Create MySQL pool
+const pool = mysql.createPool(dbConfig);
 
 // Imports dependencies and set up http server
 const request = require("request"),
@@ -20,51 +38,47 @@ const request = require("request"),
   app = express().use(body_parser.json()); // creates express http server
 
 // Sets server port and logs message on success
-var port = process.env.PORT || 1337 ;
-app.listen(port, () => console.log("webhook is listeningon port:",port));
+app.listen(port, () => console.log("webhook is listeningon port:",PORT));
 
 // Accepts POST requests at /webhook endpoint
-app.post("/webhook", (req, res) => {
-  // Parse the request body from the POST
-  let body = req.body;
+app.post('/webhook', async (req, res) => {
+  try {
+    // Extract relevant data from the request body
+    const { entry } = req.body;
+    const { from, name, text } = entry[0].changes[0].value.messages[0];
 
-  // Check the Incoming webhook message
-  console.log(JSON.stringify(req.body, null, 2));
+    // Insert data into RDS table
+    await insertMessage(from, name, text);
 
-  // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-  if (req.body.object) {
-    if (
-      req.body.entry &&
-      req.body.entry[0].changes &&
-      req.body.entry[0].changes[0] &&
-      req.body.entry[0].changes[0].value.messages &&
-      req.body.entry[0].changes[0].value.messages[0]
-    ) {
-      let phone_number_id =
-        req.body.entry[0].changes[0].value.metadata.phone_number_id;
-      let from = req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
-      let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
-      axios({
-        method: "POST", // Required, HTTP method, a string, e.g. POST, GET
-        url:
-          "https://graph.facebook.com/v17.0/" +
-          phone_number_id +
-          "/messages?access_token=" +
-          token,
-        data: {
-          messaging_product: "whatsapp",
-          to: from,
-          text: { body: "Thanks For Your Message" },
-        },
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    res.sendStatus(200);
-  } else {
-    // Return a '404 Not Found' if event is not from a WhatsApp API
-    res.sendStatus(404);
+    // Respond with success
+    res.status(200).json({ message: 'Data inserted successfully' });
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+// Function to insert data into RDS table
+async function insertMessage(from, name, text) {
+  try {
+    // Get a connection from the pool
+    const connection = await pool.getConnection();
+
+    // SQL query to insert data into your table (replace with your table name and columns)
+    const sql = 'INSERT INTO messages (phone_number, name, message) VALUES (?, ?, ?)';
+    const values = [from, name, text];
+
+    // Execute the query
+    await connection.query(sql, values);
+
+    // Release the connection
+    connection.release();
+  } catch (error) {
+    console.error('Error inserting data into RDS:', error);
+    throw error; // Rethrow the error to handle it in the caller function
+  }
+}
 
 // Accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
 // info on verification request payload: https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests 
