@@ -99,7 +99,7 @@ app.get("/webhook", (req, res) => {
    * UPDATE YOUR VERIFY TOKEN
    *This will be the Verify Token value when you set up webhook
   **/
-  const verify_token = process.env.VERIFY_TOKEN;
+  const verify_token = "qwaszxcderfvbgthSDD";
 
   // Parse params from the webhook verification request
   let mode = req.query["hub.mode"];
@@ -120,4 +120,4 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log("webhook is listening ßon port:",PORT));
+app.listen(PORT, () => console.log("webhook is listening on port:",PORT));
