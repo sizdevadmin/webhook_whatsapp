@@ -58,7 +58,7 @@ app.post('/webhook', async (req, res) => {
     }
     console.log(message)
     // Insert data into RDS table
-    await insertMessage(from, name, text);
+    await insertMessage(sender_phone, sender_name, message);
 
     // Respond with success
     res.status(200).json({ message: 'Data inserted successfully' });
