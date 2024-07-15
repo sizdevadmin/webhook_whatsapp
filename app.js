@@ -46,7 +46,7 @@ app.post('/webhook', async (req, res) => {
     // Extract relevant data from the request body
     const { entry } = req.body;
     const { from, name, text } = entry[0].changes[0].value.messages[0];
-
+    console.log(entry);
     // Insert data into RDS table
     await insertMessage(from, name, text);
 
