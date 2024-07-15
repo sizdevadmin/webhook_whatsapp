@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON request bodies
-app.use(express.json());
+//app.use(express.json());
 "use strict";
 require('dotenv').config();
 // Access token for your app
@@ -38,7 +38,7 @@ const request = require("request"),
  // app = express().use(body_parser.json()); // creates express http server
 
 // Sets server port and logs message on success
-app.listen(port, () => console.log("webhook is listeningon port:",PORT));
+
 
 // Accepts POST requests at /webhook endpoint
 app.post('/webhook', async (req, res) => {
@@ -107,3 +107,5 @@ app.get("/webhook", (req, res) => {
     }
   }
 });
+
+app.listen(PORT, () => console.log("webhook is listening ßon port:",PORT));
