@@ -51,7 +51,11 @@ app.post('/webhook', async (req, res) => {
 
     var sender_name = entry[0].changes[0].value.contacts[0].profile.name;
     var sender_phone = entry[0].changes[0].value.contacts[0].wa_id;
-    var message = entry[0].changes[0].value.messages[0].type;
+    var type = entry[0].changes[0].value.messages[0].type;
+    var message = "" ;
+    if(type == "button"){
+      message = entry[0].changes[0].value.messages[0].button.text ;
+    }
     console.log(message)
     // Insert data into RDS table
     await insertMessage(from, name, text);
