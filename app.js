@@ -55,6 +55,8 @@ app.post('/webhook', async (req, res) => {
     var message = "" ;
     if(type == "button"){
       message = entry[0].changes[0].value.messages[0].button.text ;
+    }else if(type == "text"){
+      message = entry[0].changes[0].value.messages[0].text.body ;
     }
     console.log(message)
     // Insert data into RDS table
