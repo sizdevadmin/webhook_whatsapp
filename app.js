@@ -32,7 +32,7 @@ const pool = mysql.createPool(dbConfig);
 
 // Imports dependencies and set up http server
 const request = require("request"),
-  express = require("express"),
+ // express = require("express"),
   body_parser = require("body-parser"),
   axios = require("axios").default,
   app = express().use(body_parser.json()); // creates express http server
