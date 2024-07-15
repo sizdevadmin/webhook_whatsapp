@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON request bodies
-//app.use(express.json());
+app.use(express.json());
 "use strict";
 require('dotenv').config();
 // Access token for your app
