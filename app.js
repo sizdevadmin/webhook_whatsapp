@@ -49,8 +49,10 @@ app.post('/webhook', async (req, res) => {
     const { from, name, text } = entry[0].changes[0].value.messages[0];
     console.log("ENTRYYYYY: ",entry);
 
-    var namea = entry[0].changes[0].value.contacts[0].profile.name;//.contacts ; //.profile.name;
-    console.log(namea)
+    var sender_name = entry[0].changes[0].value.contacts[0].profile.name;
+    var sender_phone = entry[0].changes[0].value.contacts[0].wa_id;
+    var message = entry[0].changes[0].value.messages[0].type;
+    console.log(message)
     // Insert data into RDS table
     await insertMessage(from, name, text);
 
