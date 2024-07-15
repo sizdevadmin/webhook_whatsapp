@@ -35,7 +35,7 @@ const request = require("request"),
  // express = require("express"),
   body_parser = require("body-parser"),
   axios = require("axios").default,
-  app = express().use(body_parser.json()); // creates express http server
+ // app = express().use(body_parser.json()); // creates express http server
 
 // Sets server port and logs message on success
 app.listen(port, () => console.log("webhook is listeningon port:",PORT));
