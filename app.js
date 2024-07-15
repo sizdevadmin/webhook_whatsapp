@@ -46,7 +46,7 @@ app.post('/webhook', async (req, res) => {
     // Extract relevant data from the request body
     const { entry } = req.body;
     const { from, name, text } = entry[0].changes[0].value.messages[0];
-    console.log(entry);
+    console.log("ENTRYYYYY: ",entry);
 
     var namea = entry.changes[0].contacts[0].profile.name;
     console.log(namea)
