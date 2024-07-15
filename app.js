@@ -66,7 +66,7 @@ async function insertMessage(from, name, text) {
     const connection = await pool.getConnection();
 
     // SQL query to insert data into your table (replace with your table name and columns)
-    const sql = 'INSERT INTO messages (phone_number, name, message) VALUES (?, ?, ?)';
+    const sql = 'INSERT INTO webhook_data (phone_number, name, message) VALUES (?, ?, ?)';
     const values = [from, name, text];
 
     // Execute the query
