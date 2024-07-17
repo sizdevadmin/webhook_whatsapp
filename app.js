@@ -52,7 +52,7 @@ app.post('/webhook', async (req, res) => {
     var sender_name = entry[0].changes[0].value.contacts[0].profile.name;
     var sender_phone = entry[0].changes[0].value.contacts[0].wa_id;
     var type = entry[0].changes[0].value.messages[0].type;
-    var timestamp = entry[0].changes[0].value.messages[0].timestamp;
+    var timestamp = convertUnixEpochToMySQLDatetime(entry[0].changes[0].value.messages[0].timestamp);
     var message = "" ;
     if(type == "button"){
       message = entry[0].changes[0].value.messages[0].button.text ;
@@ -91,6 +91,10 @@ async function insertMessage(from, name, text,timestamp) {
     console.error('Error inserting data into RDS:', error);
     throw error; // Rethrow the error to handle it in the caller function
   }
+}
+
+function convertUnixEpochToMySQLDatetime(epoch) {
+  return new Date(epoch * 1000).toISOString().slice(0, 19).replace('T', ' ');
 }
 
 // Accepts GET requests at the /webhook endpoint. You need this URL to setup webhook initially.
