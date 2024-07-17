@@ -52,6 +52,7 @@ app.post('/webhook', async (req, res) => {
     var sender_name = entry[0].changes[0].value.contacts[0].profile.name;
     var sender_phone = entry[0].changes[0].value.contacts[0].wa_id;
     var type = entry[0].changes[0].value.messages[0].type;
+    var timestamp = entry[0].changes[0].value.messages[0].timestamp;
     var message = "" ;
     if(type == "button"){
       message = entry[0].changes[0].value.messages[0].button.text ;
@@ -60,7 +61,7 @@ app.post('/webhook', async (req, res) => {
     }
     console.log(message)
     // Insert data into RDS table
-    await insertMessage(sender_phone, sender_name, message);
+    await insertMessage(sender_phone, sender_name, message,timestamp);
 
     // Respond with success
     res.status(200).json({ message: 'Data inserted successfully' });
@@ -72,14 +73,14 @@ app.post('/webhook', async (req, res) => {
 
 
 // Function to insert data into RDS table
-async function insertMessage(from, name, text) {
+async function insertMessage(from, name, text,timestamp) {
   try {
     // Get a connection from the pool
     const connection = await pool.getConnection();
 
     // SQL query to insert data into your table (replace with your table name and columns)
-    const sql = 'INSERT INTO webhook_data (phone, name, message) VALUES (?, ?, ?)';
-    const values = [from, name, text];
+    const sql = 'INSERT INTO webhook_data (phone, name, message,timestamp) VALUES (?, ?, ?)';
+    const values = [from, name, text,timestamp];
 
     // Execute the query
     await connection.query(sql, values);
